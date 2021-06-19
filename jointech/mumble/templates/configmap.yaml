@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mumble-config
+data:
+  murmur.ini: |
+    database=/var/lib/mumble/murmur.sqlite
+
+    # enable ice
+    ice="tcp -h 127.0.0.1 -p 6502"
+    icesecret=notverysecret
+
+    # Use gRPC
+    grpc="0.0.0.0:50050"
+
+    # log to stdout
+    logfile=
+
+    pidfile=
+
+    welcometext="Welcome to the server."
+
+    port=64738
+
+    host=0.0.0.0
+
+    serverpassword=
+
+    bandwidth=256000
+
+    # CELT is dead, support only opus
+    opusthreshold=0
+
+    # Maximum number of concurrent clients allowed.
+    users=128
+
+    username=[^\\s<>](?:(?!\\s)\\s|[^<>])*[^\\s<>]
+    channelname=[^\\s<>](?:(?!\\s)\\s|[^<>])*[^\\s<>]
+
+    #textmessagelength=5000
+
+    #imagemessagelength=131072
+
+    # Allow clients to use HTML in messages, user comments and channel descriptions?
+    allowhtml=true
+
+    # Murmur retains the per-server log entries in an internal database which
+    # allows it to be accessed over D-Bus/ICE.
+    # How many days should such entries be kept?
+    logdays=2
+
+    # To enable public server registration, the serverpassword must be blank, and
+    # this must all be filled out.
+    # The password here is used to create a registry for the server name; subsequent
+    # updates will need the same password. Don't lose your password.
+    # The URL is your own website, and only set the registerHostname for static IP
+    # addresses.
+    #
+
+    ## UNCOMMENT FOR PRODUCTIVE
+    #
+    registerName={{ .Values.registerName }}
+    registerPassword={{ .Values.registerPassword }}
+    registerURL={{ .Values.registerURL }}
+    registerHostname={{ .Values.domain }}
+
+    #sslCA=/tls/ca.crt
+    sslCert=/tls/tls.crt
+    sslKey=/tls/tls.key
+
+    # If murmur is started as root, which user should it switch to?
+    # This option is ignored if murmur isn't started with root privileges.
+    uname=user
+
+    # If this options is enabled, only clients which have a certificate are allowed
+    # to connect.
+    #certrequired=False
+
+    # You can configure any of the configuration options for Ice here. We recommend
+    # leave the defaults as they are.
+    # Please note that this section has to be last in the configuration file.
+    #
+    [Ice]
+    Ice.Warn.UnknownProperties=1
+    Ice.MessageSizeMax=65536

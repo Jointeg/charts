@@ -1,0 +1,7 @@
+domain: mumble.example.org
+
+registerName: Example server
+registerURL: https://example.org
+# set a short password here, so nobody can hijack your server registration.
+registerPassword: ""
+port: 64738

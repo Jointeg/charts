@@ -1,0 +1,86 @@
+# Default values for mediawiki.
+
+replicaCount: 1
+
+image:
+  repository: zombi/mediawiki
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+wiki:
+  # Install decides if a job should be started to install the database schema once.
+  install: false
+  server: "https://wiki.example.org"
+  secretKey: "1166f2af9b8c1e1401f38a11d95628629bef0b75b90d09b296390041d19c3b2c"
+
+persistence:
+  enabled: false
+  #existingClaim: ""
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  storageClass: ""
+  annotations: {}
+
+database:
+  type: postgres
+  server: postgres.example.org
+  port: 5432
+  name: mediawiki
+  username: mediawiki  # unused if secretName is set
+  password: mediawiki  # unused if secretName is set
+  #secretName: database-secret
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 33  # www-data
+
+securityContext: {}
+#  runAsNonRoot: true
+#  runAsUser: 33  # www-data
+#  allowPrivilegeEscalation: false
+#  capabilities:
+#    drop:
+#      - all
+#    add:
+#      - NET_BIND_SERVICE  # For listening on port 80
+#  # readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: ['/']
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+extraVolumeMounts: {}
+
+extraVolumes: {}
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

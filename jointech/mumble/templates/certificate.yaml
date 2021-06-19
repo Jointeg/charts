@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.domain }}-cert
+spec:
+  secretName: {{ .Values.domain }}-cert
+  dnsNames:
+  - {{ .Values.domain }}
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: letsencrypt

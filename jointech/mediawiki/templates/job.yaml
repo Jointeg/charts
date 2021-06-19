@@ -1,0 +1,52 @@
+{{- if and .Values.wiki.install (ne "sqlite" .Values.database.type) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mediawiki.fullname" . }}-setup
+  labels:
+    {{- include "mediawiki.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: setup
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ['db-setup.sh']
+          env:
+            {{- include "mediawiki.env" . | nindent 12 }}
+          volumeMounts:
+            - name: data-volume
+              mountPath: /var/www/data
+            - name: localstore-volume
+              mountPath: /var/www/localstore
+      volumes:
+        - name: localstore-volume
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ default (include "mediawiki.fullname" .) .Values.persistence.existingClaim }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+        - name: data-volume
+          emptyDir: {}
+        {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

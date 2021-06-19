@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: mumble
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.domain }}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+  - port: {{ .Values.port }}
+    targetPort: 64738
+    protocol: TCP
+    name: control
+  selector:
+    app.kubernetes.io/name: mumble
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+# We need a second load balancer, since a single load balancer cannot
+# handle multiple protocols at once (TCP/UDP).
+# since the services both point to the same node (thanks to Local policy),
+# we may only specify the annotation for external-dns ONCE.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-voice
+  labels:
+    app.kubernetes.io/name: mumble
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+  - port: {{ .Values.port }}
+    targetPort: 64738
+    protocol: UDP
+    name: voice
+  selector:
+    app.kubernetes.io/name: mumble
+    app.kubernetes.io/instance: {{ .Release.Name }}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: mediawiki
+description: A wiki with semantic extensions
+
+type: application
+
+version: 0.0.0
+
+appVersion: 3.15.1

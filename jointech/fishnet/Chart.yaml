@@ -1,0 +1,4 @@
+apiVersion: v2
+name: fishnet
+description: distributed stockfish analysis for lichess
+version: 0.1.0
