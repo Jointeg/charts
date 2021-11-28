@@ -36,7 +36,7 @@ spec:
           env:
             - name: KEY
             {{- if .Values.fishnetKey }}
-              value: {{ .Values.cookieSecret.key }}
+              value: {{ .Values.fishnetKey }}
             {{- else }}
               valueFrom:
                 secretKeyRef:
